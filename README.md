@@ -8,7 +8,7 @@ https://vimeo.com/80697779
 >##Components
 > - Nokia 5110 LCD attached to pins 7, 6, 5, 4, 3
 > - Active Buzzer attached to pin 8
-> - MMA7361 accelerometer attached to pins 13, 12, 12, A0, A1 and A2
+> - MMA7361 accelerometer attached to pins 13, 12, 11, A0, A1 and A2
 
 --------
 
