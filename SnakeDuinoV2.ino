@@ -44,7 +44,8 @@
 
 /* defaults */
 #define SNAKE_LEN   10
-#define SNAKE_SPEED 50
+#define SNAKE_SPEED 30
+
 
 /* lcd display */
 Adafruit_PCD8544 lcd = Adafruit_PCD8544(7, 6, 5, 4, 3);
@@ -54,7 +55,7 @@ int snakeLen = SNAKE_LEN;
 int point    = 0, points = 10;
 int level    = 0, time   = SNAKE_SPEED;
 
-int xSnake,        ySnake; /* snake face */
+int xSnake,    ySnake; /* snake face */
 int xFood = 0, yFood  = 0;
 
 /* directions */
@@ -72,7 +73,7 @@ int snakeRow[260];
 // Accelerometer
 AcceleroMMA7361 accelero;
 int x, y, z; /* coords */
-int acceleroSensi = LOW; /* sensitivity */
+int acceleroSensi = HIGH; /* sensitivity */
 
 void(* reset)(void) = 0;
 
@@ -114,13 +115,12 @@ void loop()
 void coords()
 {
   lcd.clearDisplay();  
-
-  x = accelero.getXAccel();
-  y = accelero.getYAccel();
-  z = accelero.getZAccel();
-
+  
+  accelero.getAccelXYZ(&x, &y, &z);
+  
   if(false) // for debug
   {
+    lcd.setTextSize(2);
     lcd.print("X  ");
     lcd.println(x);
   
@@ -132,11 +132,6 @@ void coords()
 
     lcd.display();
     delay(500);
-  }
-  
-  if(z < -10)
-  {
-    showPause();
   }
 }
 
@@ -263,32 +258,44 @@ void drawSnake()
  */
 void moveSnake()
 {
+  int Xratio = 10;
+  int Yratio = 15;
+  
   /* LEFT */
-  if(x < 10 and right == false)
+  if(x < -(Xratio) and right == false)
   {
     if((xSnake > 0 or xSnake <= lcd.width() - xSnake))
       direc(LEFT);
+    return;
   }
   
   /* RIGHT */
-  if(x > 10 and left == false)
+  if(x > Xratio and left == false)
   {
     if((xSnake > 0 or xSnake <= lcd.width() - xSnake))
       direc(RIGHT);
+    return;
   }
   
   /* UP */
-  if(y > 10 and down == false)
+  if(y > Yratio and down == false)
   {
     if((ySnake > 0 or ySnake <= lcd.height() - ySnake))
       direc(UP);
+    return;
   }
   
   /* DOWN */
-  if(y < -10 and up == false)
+  if(y < (Yratio * -1) and up == false)
   {
     if((ySnake > 0 or ySnake <= lcd.height() - ySnake));
       direc(DOWN);
+    return;
+  }
+  
+  if(z < -50)
+  {
+    showPause();
   }
 }
 
@@ -409,19 +416,20 @@ void resetGame()
 void intro()
 {
   lcd.clearDisplay();
-  lcd.setTextSize(2);
+
   lcd.setTextColor(WHITE, BLACK);
-  lcd.println("Snake");
+  lcd.setTextSize(2);
+  lcd.print(" Snake ");
   lcd.setTextColor(BLACK);
   lcd.print("Duino");
   lcd.setTextColor(WHITE, BLACK);
-  lcd.print("II");  
+  lcd.print("II");
   lcd.setTextSize(1);
   lcd.setTextColor(BLACK);
   lcd.println("");
-  lcd.println("By hewertho.mn");
+  lcd.print("by hewerthomn ");
   lcd.display();
-  delay(3000);
+  delay(2500);
 }
 
 void calibrateAccelerometer()
